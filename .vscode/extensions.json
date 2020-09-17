@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "angular.ng-template",
+    "natewallace.angular2-inline",
+    "kisstkondoros.vscode-codemetrics",
+    "christian-kohler.path-intellisense"
+  ]
+}
