@@ -2,6 +2,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import { GridOptions, Module } from '@ag-grid-community/core'
 import { Component } from '@angular/core'
 import { Task } from './models/task'
+import { User } from './models/user'
 import { TaskService } from './task.service'
 
 @Component({
@@ -20,8 +21,6 @@ export class AppComponent {
   title = 'Where is the state? Thinking in a Reactive Way'
   modules: Module[] = [ClientSideRowModelModule]
 
-  editedItem?: Task | null
-
   tasks = this.taskService.tasks
 
   gridOptions: GridOptions = {
@@ -37,10 +36,10 @@ export class AppComponent {
       { field: 'updateDate' },
       {
         field: 'user',
-        valueGetter: ({ data }: { data: Task }) =>
-          data.user != null
-            ? `${data.user.firstName} ${data.user.lastName}`
-            : '---',
+        valueGetter: ({ data }: { data: Task }) => {
+          const user: User | undefined = data.user
+          return user != null ? `${user.firstName} ${user.lastName}` : '---'
+        },
       },
     ],
     singleClickEdit: true,

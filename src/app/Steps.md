@@ -210,3 +210,70 @@
         this.taskService.delete(data).subscribe()
     },
    ```
+
+# BONUS ROUND
+
+# Step 7: Handle concurrency issues with editing a Task when new tasks get sent from the interval.
+
+## App Component
+
+1. Pause receiving updates
+
+   ```typescript
+   private currentEditTask?: Task
+   tasks = this.taskService.tasks.pipe(
+        filter(() => this.currentEditTask == null),
+    )
+   ...
+
+   public gridOptions: GridOptions = {
+       ...
+       onCellEditingStarted: ({data}: CellEditingStartedEvent) => {
+           this.currentEditTask = data
+       },
+       onCellEditingStopped: () => {
+           this.editingTask = undefined
+           this.taskService.forceSendUpdates()
+       }
+   }
+   ```
+
+# Step 8: Handle knowing when a task that is being edited has changed on the server
+
+## App Component
+
+1. Get notified when the current task is updated.
+
+   ```typescript
+   ...
+   public editingTaskHasChanges = false
+   private editingTask?: Task
+   private destroySubject = new Subject<void>()
+   ...
+   constructor(private taskService: TaskService) {
+       taskService.tasks.pipe(
+           takeUntil(this.destroySubject),
+           map(tasks => this.editingTask == null ? null : tasks.find(x =>
+               x.id === this.editingTask.id &&
+               x.updateDate !== this.editingTask.updateDate)
+           ),
+           tap(task => {
+               this.editingTaskHasChanges = task != null
+           })
+       ).subscribe()
+   }
+
+   public ngOnDestroy() {
+       this.destroySubject.next()
+       this.destroySubject.complete()
+   }
+   ...
+   ```
+
+   Now you can give a prompt to the user that the item they are currently
+   editing has been updated on the server.
+
+   ```html
+   <!-- app.component.ts template -->
+   <h3 *ngIf="editingTaskHasChanges">Editing Task Has Changes</h3>
+   ```
