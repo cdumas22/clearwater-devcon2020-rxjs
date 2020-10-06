@@ -29,7 +29,9 @@ export class AppComponent {
         valueGetter: () => 'DELETE',
         width: 100,
         cellClass: 'delete-link',
-        onCellClicked: ({ data }: { data: Task }) => {},
+        onCellClicked: ({ data }: { data: Task }) => {
+          // this.taskService.delete(data).subscribe()
+        },
       },
       { field: 'id', sort: 'asc' },
       { field: 'title', editable: true },
@@ -43,12 +45,20 @@ export class AppComponent {
       },
     ],
     singleClickEdit: true,
-    onCellValueChanged: ({ data }: { data: Task }) => {},
+    onCellValueChanged: ({ data }: { data: Task }) => {
+      // this.taskService.update(data).subscribe()
+    },
   }
 
   constructor(private readonly taskService: TaskService) {}
 
   create() {
+    // this.taskService
+    //   .create({
+    //     title: 'test',
+    //     dueDate: new Date().toISOString(),
+    //   } as Task)
+    //   .subscribe()
     //create
   }
 }
